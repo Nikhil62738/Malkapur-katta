@@ -1,0 +1,39 @@
+# Render Blueprint for the Malkapur Katta backend (Express + MongoDB + JWT + Cloudinary).
+# Deploy by pushing this repo and choosing "New +" > "Blueprint" in the Render dashboard.
+
+services:
+  - type: web
+    name: malkapur-katta-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      # Set to your Netlify site URL (comma-separated for multiple origins)
+      - key: CORS_ORIGIN
+        value: "https://malkapurkattaofficial.netlify.app"
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NAME
+        value: Malkapur Katta Admin
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: malkapur-katta

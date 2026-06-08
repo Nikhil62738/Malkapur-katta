@@ -1,0 +1,16 @@
+# Netlify configuration for the Malkapur Katta frontend (Vite + React SPA).
+
+[build]
+  command = "npm install && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund"
+  VITE_API_BASE_URL = "https://malkapur-katta-1.onrender.com"
+
+# SPA fallback: let React Router handle all client-side routes (including /admin).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

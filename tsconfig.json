@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "firebase/app": ["./src/lib/fbshim/app.ts"],
+      "firebase/auth": ["./src/lib/fbshim/auth.ts"],
+      "firebase/firestore": ["./src/lib/fbshim/firestore.ts"],
+      "firebase/storage": ["./src/lib/fbshim/storage.ts"],
+      "firebase/messaging": ["./src/lib/fbshim/messaging.ts"]
+    }
+  },
+  "include": ["src"]
+}
