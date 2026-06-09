@@ -1,0 +1,17 @@
+# Malkapur Katta - robots.txt
+User-agent: *
+Allow: /
+
+# Block the admin panel from search engines
+Disallow: /admin
+Disallow: /admin/
+
+# Allow Google News & image bots full access to public content
+User-agent: Googlebot-News
+Allow: /
+Disallow: /admin
+
+User-agent: Googlebot-Image
+Allow: /
+
+Sitemap: https://malkapurkatta.netlify.app/sitemap.xml
