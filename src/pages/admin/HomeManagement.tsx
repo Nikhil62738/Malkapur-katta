@@ -1,6 +1,6 @@
 import { AdminPanelSkeleton } from '../../components/admin/AdminSkeleton';
 import React, { useState, useEffect } from 'react';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
 import { useToast } from '../../components/ui/Toast';
@@ -37,7 +37,14 @@ export default function HomeManagement() {
       return;
     }
 
-    const unsub = onSnapshot(doc(db, 'settings', 'home'), (snap) => {
+    // Load ONCE instead of subscribing. This is an edit form: a live polling
+    // listener (~12s) would overwrite the admin's in-progress edits, which is
+    // why typed headlines "disappeared after 10-12 seconds". After Save, local
+    // state is the source of truth and is persisted to the backend.
+    let active = true;
+    (async () => {
+      const snap = await getDoc(doc(db, 'settings', 'home'));
+      if (!active) return;
       if (snap.exists()) {
         const data = snap.data();
         setHeroImages(data.heroImages || []);
@@ -55,12 +62,12 @@ export default function HomeManagement() {
         ]);
       }
       setLoading(false);
-    }, (err) => {
-      console.error("Firestore home settings loading error:", err);
-      setLoading(false);
+    })().catch((err) => {
+      console.error("Home settings loading error:", err);
+      if (active) setLoading(false);
     });
 
-    return () => unsub();
+    return () => { active = false; };
   }, []);
 
   // Save all home settings to Firestore

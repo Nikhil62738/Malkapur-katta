@@ -1,6 +1,6 @@
 import { AdminPanelSkeleton } from '../../components/admin/AdminSkeleton';
 import React, { useState, useEffect } from 'react';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
 import { useToast } from '../../components/ui/Toast';
@@ -57,7 +57,12 @@ export default function AboutManagement() {
       return;
     }
 
-    const unsub = onSnapshot(doc(db, 'about', 'main'), (snap) => {
+    // Load ONCE instead of subscribing so a ~12s polling refresh never wipes
+    // the admin's in-progress edits before they hit Save.
+    let active = true;
+    (async () => {
+      const snap = await getDoc(doc(db, 'about', 'main'));
+      if (!active) return;
       if (snap.exists()) {
         const data = snap.data();
         setAboutEn(data.aboutEn || '');
@@ -75,12 +80,12 @@ export default function AboutManagement() {
         ]);
       }
       setLoading(false);
-    }, (err) => {
-      console.error("Firestore about page loading error:", err);
-      setLoading(false);
+    })().catch((err) => {
+      console.error("About page loading error:", err);
+      if (active) setLoading(false);
     });
 
-    return () => unsub();
+    return () => { active = false; };
   }, []);
 
   const handleSaveAbout = async () => {

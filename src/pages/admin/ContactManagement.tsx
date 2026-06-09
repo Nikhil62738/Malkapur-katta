@@ -1,6 +1,6 @@
 import { AdminPanelSkeleton } from '../../components/admin/AdminSkeleton';
 import React, { useState, useEffect } from 'react';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import { useToast } from '../../components/ui/Toast';
 import { Phone, Mail, MapPin, Globe, Save, Sparkles, Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
@@ -41,7 +41,12 @@ export default function ContactManagement() {
       return;
     }
 
-    const unsub = onSnapshot(doc(db, 'settings', 'contact'), (snap) => {
+    // Load ONCE instead of subscribing so a ~12s polling refresh never wipes
+    // the admin's in-progress edits before they hit Save.
+    let active = true;
+    (async () => {
+      const snap = await getDoc(doc(db, 'settings', 'contact'));
+      if (!active) return;
       if (snap.exists()) {
         const data = snap.data();
         setPhone(data.phone || '');
@@ -65,12 +70,12 @@ export default function ContactManagement() {
         setTwitter('https://twitter.com/malkapurkatta');
       }
       setLoading(false);
-    }, (err) => {
-      console.error("Firestore contact settings loading error:", err);
-      setLoading(false);
+    })().catch((err) => {
+      console.error("Contact settings loading error:", err);
+      if (active) setLoading(false);
     });
 
-    return () => unsub();
+    return () => { active = false; };
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
