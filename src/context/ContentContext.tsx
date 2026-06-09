@@ -269,8 +269,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
   // localized data mapping
   const finalBreakingNews = useMemo(() => {
     if (dbHomeSettings) {
-      const headlines = language === 'mr' ? dbHomeSettings.headlinesMr : dbHomeSettings.headlines;
-      if (headlines && headlines.length > 0) return headlines;
+      const primary = language === 'mr' ? dbHomeSettings.headlinesMr : dbHomeSettings.headlines;
+      const fallback = language === 'mr' ? dbHomeSettings.headlines : dbHomeSettings.headlinesMr;
+      // Show the current language's headlines; if that list is empty, fall back
+      // to the other language so a headline added in only one language still
+      // appears on the ticker instead of showing nothing.
+      if (primary && primary.length > 0) return primary;
+      if (fallback && fallback.length > 0) return fallback;
     }
     return [];
   }, [dbHomeSettings, language]);

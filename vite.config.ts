@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa';
 import { fileURLToPath } from 'node:url';
 
 // Resolve a path relative to this config file.
@@ -21,61 +20,7 @@ export default defineConfig({
       { find: '@', replacement: r('./src') },
     ],
   },
-  plugins: [
-    react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['logo.jpeg'],
-      manifest: {
-        name: 'Malkapur Katta Official',
-        short_name: 'Malkapur Katta',
-        description: 'The digital identity of Malkapur — news, events, culture & community.',
-        theme_color: '#0F0F0F',
-        background_color: '#0F0F0F',
-        display: 'standalone',
-        orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
-        lang: 'en',
-        categories: ['news', 'social', 'lifestyle'],
-        icons: [
-          {
-            src: '/logo.jpeg',
-            sizes: '192x192',
-            type: 'image/jpeg',
-            purpose: 'any',
-          },
-          {
-            src: '/logo.jpeg',
-            sizes: '512x512',
-            type: 'image/jpeg',
-            purpose: 'maskable',
-          },
-        ],
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,jpeg,jpg,webp,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/picsum\.photos\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'picsum-images',
-              expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 30 },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/i\.ytimg\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'youtube-thumbs',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 },
-            },
-          },
-        ],
-      },
-    }),
-  ],
+  plugins: [react()],
   build: {
     rollupOptions: {
       output: {

@@ -14,6 +14,7 @@ import { PageSkeleton } from './components/ui/SkeletonLoader';
 // ProtectedRoute must NOT be lazy — it wraps routes and must be available
 // synchronously when React Router resolves the route tree.
 import ProtectedRoute from './components/admin/ProtectedRoute';
+import InstallAppButton from './components/ui/InstallAppButton';
 
 // Main Site pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -109,6 +110,7 @@ export default function App() {
           <ToastProvider>
             <AuthProvider>
               <LoadingScreen />
+              <InstallAppButton />
               <BrowserRouter>
                 <ScrollToTop />
                 <AnimatedRoutes />

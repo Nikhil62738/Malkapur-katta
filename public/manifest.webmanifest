@@ -1,0 +1,17 @@
+{
+  "name": "Malkapur Katta Official",
+  "short_name": "Malkapur Katta",
+  "description": "The digital identity of Malkapur — news, events, culture & community.",
+  "theme_color": "#0F0F0F",
+  "background_color": "#0F0F0F",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "en",
+  "categories": ["news", "social", "lifestyle"],
+  "icons": [
+    { "src": "/logo.jpeg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
+    { "src": "/logo.jpeg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }
+  ]
+}
