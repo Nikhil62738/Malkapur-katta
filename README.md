@@ -121,4 +121,3 @@ app using client-side routing, configure your host to **fall back to
   which is fine for this content volume.
 - This package ships **without** `node_modules`. Run `npm install` in both the
   root and `server/` directories before first use.
-"# Malkapur-katta" 

@@ -15,6 +15,8 @@ export default function HomeManagement() {
   const [heroImages, setHeroImages] = useState<string[]>([]);
   const [headlines, setHeadlines] = useState<string[]>([]);
   const [newHeadline, setNewHeadline] = useState('');
+  const [headlinesMr, setHeadlinesMr] = useState<string[]>([]);
+  const [newHeadlineMr, setNewHeadlineMr] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // Load home settings from Firestore document 'settings/home' using real-time listener
@@ -40,6 +42,7 @@ export default function HomeManagement() {
         const data = snap.data();
         setHeroImages(data.heroImages || []);
         setHeadlines(data.headlines || []);
+        setHeadlinesMr(data.headlinesMr || []);
       } else {
         setHeroImages([
           'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80',
@@ -67,8 +70,9 @@ export default function HomeManagement() {
       await setDoc(doc(db, 'settings', 'home'), {
         heroImages,
         headlines,
+        headlinesMr,
         updatedAt: new Date().toISOString()
-      });
+      }, { merge: true });
       success('Home settings updated successfully!');
     } catch (err: any) {
       console.error(err);
@@ -117,6 +121,18 @@ export default function HomeManagement() {
   // Remove headline ticker string
   const removeHeadline = (index: number) => {
     setHeadlines((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Add Marathi headline ticker string
+  const addHeadlineMr = () => {
+    if (!newHeadlineMr.trim()) return;
+    setHeadlinesMr((prev) => [...prev, newHeadlineMr.trim()]);
+    setNewHeadlineMr('');
+  };
+
+  // Remove Marathi headline ticker string
+  const removeHeadlineMr = (index: number) => {
+    setHeadlinesMr((prev) => prev.filter((_, i) => i !== index));
   };
 
   if (loading) {
@@ -187,9 +203,9 @@ export default function HomeManagement() {
       {/* Homepage Headline Ticker */}
       <section className="bg-slate-950/40 border border-slate-850 rounded-2xl p-6 shadow-lg">
         <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-orange-400" /> Scrolling News Ticker Headlines
+          <Sparkles className="w-5 h-5 text-orange-400" /> Scrolling News Ticker Headlines (English)
         </h3>
-        <p className="text-slate-400 text-xs mb-6">Add urgent announcements or breaking headlines that scroll across the top bar.</p>
+        <p className="text-slate-400 text-xs mb-6">Shown on the ticker when the site is viewed in English. Type a headline, click Add, then Save Changes.</p>
 
         <div className="flex gap-2.5 mb-6">
           <input
@@ -230,7 +246,59 @@ export default function HomeManagement() {
 
           {headlines.length === 0 && (
             <div className="text-center py-6 text-slate-650 text-sm italic">
-              No ticker headlines added. Add one above!
+              No English ticker headlines added. Add one above!
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Homepage Headline Ticker (Marathi) */}
+      <section className="bg-slate-950/40 border border-slate-850 rounded-2xl p-6 shadow-lg">
+        <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-orange-400" /> Scrolling News Ticker Headlines (मराठी)
+        </h3>
+        <p className="text-slate-400 text-xs mb-6">Shown on the ticker when the site is viewed in Marathi. Type a headline, click Add, then Save Changes.</p>
+
+        <div className="flex gap-2.5 mb-6">
+          <input
+            type="text"
+            value={newHeadlineMr}
+            onChange={(e) => setNewHeadlineMr(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addHeadlineMr()}
+            placeholder="मथळा येथे टाइप करा..."
+            className="flex-1 bg-slate-900 border border-slate-800 focus:border-orange-500/50 rounded-xl px-4 py-3 text-sm outline-none text-white placeholder:text-slate-600"
+          />
+          <button
+            onClick={addHeadlineMr}
+            className="px-5 py-3 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-sm font-semibold transition-all flex items-center gap-1.5"
+          >
+            <Plus className="w-4 h-4" /> Add
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          {headlinesMr.map((headline, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm font-medium hover:border-slate-750 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
+                <span>{headline}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeHeadlineMr(index)}
+                className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-950/20 transition-all shrink-0"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+
+          {headlinesMr.length === 0 && (
+            <div className="text-center py-6 text-slate-650 text-sm italic">
+              No Marathi ticker headlines added. Add one above!
             </div>
           )}
         </div>
